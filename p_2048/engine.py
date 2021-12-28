@@ -133,10 +133,12 @@ class Move:
             print(*row)
         print("-" * 10)
 
-    def get_number_from_index(self, i, j):
+    @staticmethod
+    def get_number_from_index(i, j):
         return i * 4 + j + 1
 
-    def get_index_from_number(self, num):
+    @staticmethod
+    def get_index_from_number(num):
         num -= 1
         x, y = num // 4, num % 4
         return x, y
@@ -263,8 +265,6 @@ def game_start():
         elif input_ == "s":
             grid.move_down()
 
-
-game_start()
 
 
 
