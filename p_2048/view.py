@@ -9,8 +9,8 @@ import itertools
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super().__init__()
-
-        self.setWindowTitle("2048")
+        self.score = 0
+        self.setWindowTitle(f"2048 Score: {self.score}")
         self.setGeometry(300, 200, 610, 610)
         self.mas = [
             [0, 0, 0, 0],
@@ -65,33 +65,39 @@ class MainWindow(QtWidgets.QMainWindow):
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.cyan))
             if i.toPlainText() == "32":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.magenta))
-            if i.toPlainText() == "132":
+            if i.toPlainText() == "64":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.darkCyan))
-            if i.toPlainText() == "264":
+            if i.toPlainText() == "128":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.darkGreen))
-            if i.toPlainText() == "512":
+            if i.toPlainText() == "256":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.darkRed))
-            if i.toPlainText() == "1024":
+            if i.toPlainText() == "512":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.red))
-            if i.toPlainText() == "2048":
+            if i.toPlainText() == "1024":
                 rects[k].setBrush(QtGui.QBrush(QtCore.Qt.darkBlue))
+            if i.toPlainText() == "2048":
+                rects[k].setBrush(QtGui.QBrush(QtCore.Qt.black))
         return rects
+
+    def win_case(self):
+        if self.score >= 2048:
+            self.view.scene().addText("YOU WIN!!!!", QtGui.QFont("Arial", 60)).setPos(0, 200)
+
 
     def keyPressEvent(self, event:QtGui.QKeyEvent) -> None:
 
-        if len(self.grid.get_empty_list()) < 15:
+        if len(self.grid.get_empty_list()) != 0:
             a = self.grid.get_index_from_number(random.choice(self.grid.get_empty_list()))
-
-            a = self.grid.insert_2_or_4(a[0], a[1])
-
+            self.grid.insert_2_or_4(a[0], a[1])
         rects = [value for index, value in enumerate(self.view.scene().items()) if index % 2 == 1]
         texts = [value for index, value in enumerate(self.view.scene().items()) if index % 2 == 0]
         self.paint_rect(texts, rects)
         # Game start
         if event.key() == QtCore.Qt.Key_P:
+            test, delta = self.grid.move_up()
             for k, j in enumerate(reversed(texts)):
                 x, y = self.grid.get_index_from_number(k + 1)
-                j.setPlainText(str(a[x][y]))
+                j.setPlainText(str(test[x][y]))
                 self.paint_rect(texts, rects)
 
         if event.key() == QtCore.Qt.Key_W:
@@ -100,6 +106,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 x, y = engine.Move.get_index_from_number(k + 1)
                 j.setPlainText(str(test[x][y]))
                 self.paint_rect(texts, rects)
+            self.score += delta
+            self.setWindowTitle(f"2048 Score: {self.score}")
 
         if event.key() == QtCore.Qt.Key_S:
             test, delta = self.grid.move_down()
@@ -107,6 +115,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 x, y = engine.Move.get_index_from_number(k + 1)
                 j.setPlainText(str(test[x][y]))
                 self.paint_rect(texts, rects)
+            self.score += delta
+            self.setWindowTitle(f"2048 Score: {self.score}")
 
         if event.key() == QtCore.Qt.Key_A:
             test, delta = self.grid.move_left()
@@ -114,6 +124,8 @@ class MainWindow(QtWidgets.QMainWindow):
                 x, y = engine.Move.get_index_from_number(k + 1)
                 j.setPlainText(str(test[x][y]))
                 self.paint_rect(texts, rects)
+            self.score += delta
+            self.setWindowTitle(f"2048 Score: {self.score}")
 
         if event.key() == QtCore.Qt.Key_D:
             test, delta = self.grid.move_right()
@@ -121,6 +133,9 @@ class MainWindow(QtWidgets.QMainWindow):
                 x, y = engine.Move.get_index_from_number(k + 1)
                 j.setPlainText(str(test[x][y]))
                 self.paint_rect(texts, rects)
+            self.score += delta
+            self.setWindowTitle(f"2048 Score: {self.score}")
+        self.win_case()
 
 
 if __name__ == '__main__':
